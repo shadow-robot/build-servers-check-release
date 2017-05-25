@@ -8,9 +8,7 @@ ENV remote_shell_script="https://raw.githubusercontent.com/shadow-robot/sr-build
 
 ENV PROJECTS_WS=/home/user/projects/shadow_robot
 ENV toolset_repo=build-servers-check-release
-ENV toolset_branch=kinetic-devel
-ARG GITHUB_LOGIN
-ARG GITHUB_PASSWORD
+ENV toolset_branch_2=F_ssh_test
 
 RUN set +x && \
 
@@ -18,7 +16,8 @@ RUN set +x && \
     apt-get update && \
     wget -O /tmp/oneliner "$( echo "$remote_shell_script" | sed 's/#/%23/g' )" && \
     chmod 755 /tmp/oneliner && \
-    gosu $MY_USERNAME /tmp/oneliner -w $PROJECTS_WS/base -r $toolset_repo -b $toolset_branch -i repository.rosinstall -v "kinetic" -l $GITHUB_LOGIN -p $GITHUB_PASSWORD && \
+    gosu $MY_USERNAME /tmp/oneliner -w $PROJECTS_WS/base -r $toolset_repo -b $toolset_branch_2 -i repository.rosinstall -v "kinetic" && \
+
     
     echo "Removing cache" && \
     apt-get clean && \

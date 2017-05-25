@@ -9,7 +9,4 @@ services:
   system-under-test:
     build:
       context: ..
-      args:
-        GITHUB_LOGIN: "${GITHUB_LOGIN}"
-        GITHUB_PASSWORD: "${GITHUB_PASSWORD}"
     command: bash -c "source /opt/ros/kinetic/setup.bash && roscore"
