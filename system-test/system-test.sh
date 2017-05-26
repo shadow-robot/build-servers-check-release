@@ -35,6 +35,7 @@ fi
 # Docker silently removes any special characters from -p arg, so to avoid disagreements:
 TEST_BUILD_TAG=$(echo $TEST_BUILD_TAG | tr -dc '[:alnum:]\n\r' | tr '[:upper:]' '[:lower:]')
 
+
 # Function to kill and remove any docker containers that have the build tag
 cleanup() {
   echo "Killing docker-compose containers..."
@@ -45,6 +46,10 @@ cleanup() {
   docker rmi -f `docker images | awk '$1~/^'$TEST_BUILD_TAG'/ {print $3}'`
   echo "Removing docker-compose networks..."
   docker network rm `docker network ls | awk '$2~/^'$TEST_BUILD_TAG'/ {print $1}'`
+  echo "Removing the http server container"
+  docker stop nginx-ssh && docker rm nginx-ssh
+  echo "Removing the ssh key"
+  cd $WORKSPACE && rm -f id_rsa
 }
 
 # Exit function to ensure cleanup
@@ -56,6 +61,10 @@ exit_clean() {
 
 # Trap any unexpected errors with an error report and the cleanup function
 trap 'cleanup ; printf "Tests failed for unexpected reasons..."' HUP INT QUIT PIPE TERM
+
+# Set up the https server with ssh key
+cp --no-preserve=mode,ownership $id_rsa .
+docker run --name=nginx-ssh -d -v $WORKSPACE:/usr/share/nginx/html -p 8008:80 nginx
 
 # Try building test image(s)
 docker-compose -p $TEST_BUILD_TAG build
@@ -88,21 +97,21 @@ else
 fi
 
 # Tag and push built image-under-test to Docker hub
-DOCKER_HUB_TAG="shadowrobot/build-servers-check-release:${release_tag_flavour}-v${release_tag_version}"
-docker login -u ${DOCKER_HUB_USERNAME} -p ${DOCKER_HUB_PASSWORD}
-if [ $? -ne 0 ]; then
-  echo "Error: Failed to log in to Docker Hub. Aborting."
-  exit_clean 1
-fi
-docker tag ${TEST_BUILD_TAG}_system-under-test ${DOCKER_HUB_TAG}
-if [ $? -ne 0 ]; then
-  echo "Error: Failed to tag built Docker image as \"${DOCKER_HUB_TAG}\". Aborting."
-  exit_clean 1
-fi
-docker push  ${DOCKER_HUB_TAG}
-if [ $? -ne 0 ]; then
-  echo "Error: Failed to push \"${DOCKER_HUB_TAG}\" to Docker Hub. Aborting."
-  exit_clean 1
-fi
+#DOCKER_HUB_TAG="shadowrobot/build-servers-check-release:${release_tag_flavour}-v${release_tag_version}"
+#docker login -u ${DOCKER_HUB_USERNAME} -p ${DOCKER_HUB_PASSWORD}
+#if [ $? -ne 0 ]; then
+#  echo "Error: Failed to log in to Docker Hub. Aborting."
+#  exit_clean 1
+#fi
+#docker tag ${TEST_BUILD_TAG}_system-under-test ${DOCKER_HUB_TAG}
+#if [ $? -ne 0 ]; then
+#  echo "Error: Failed to tag built Docker image as \"${DOCKER_HUB_TAG}\". Aborting."
+#  exit_clean 1
+#fi
+#docker push  ${DOCKER_HUB_TAG}
+#if [ $? -ne 0 ]; then
+#  echo "Error: Failed to push \"${DOCKER_HUB_TAG}\" to Docker Hub. Aborting."
+#  exit_clean 1
+#fi
 
 exit_clean 0
