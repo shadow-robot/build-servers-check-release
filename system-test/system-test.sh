@@ -97,17 +97,17 @@ else
 fi
 
 # Tag and push built image-under-test to Docker hub
-#DOCKER_HUB_TAG="shadowrobot/build-servers-check-release:${release_tag_flavour}-v${release_tag_version}"
-#docker login -u ${DOCKER_HUB_USERNAME} -p ${DOCKER_HUB_PASSWORD}
-#if [ $? -ne 0 ]; then
-#  echo "Error: Failed to log in to Docker Hub. Aborting."
-#  exit_clean 1
-#fi
-#docker tag ${TEST_BUILD_TAG}_system-under-test ${DOCKER_HUB_TAG}
-#if [ $? -ne 0 ]; then
-#  echo "Error: Failed to tag built Docker image as \"${DOCKER_HUB_TAG}\". Aborting."
-#  exit_clean 1
-#fi
+DOCKER_HUB_TAG="shadowrobot/build-servers-check-release:${release_tag_flavour}-v${release_tag_version}"
+docker login -u ${DOCKER_HUB_USERNAME} -p ${DOCKER_HUB_PASSWORD}
+if [ $? -ne 0 ]; then
+  echo "Error: Failed to log in to Docker Hub. Aborting."
+  exit_clean 1
+fi
+docker tag ${TEST_BUILD_TAG}_system-under-test ${DOCKER_HUB_TAG}
+if [ $? -ne 0 ]; then
+  echo "Error: Failed to tag built Docker image as \"${DOCKER_HUB_TAG}\". Aborting."
+  exit_clean 1
+fi
 #docker push  ${DOCKER_HUB_TAG}
 #if [ $? -ne 0 ]; then
 #  echo "Error: Failed to push \"${DOCKER_HUB_TAG}\" to Docker Hub. Aborting."
