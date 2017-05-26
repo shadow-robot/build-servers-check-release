@@ -43,7 +43,7 @@ cleanup() {
   echo "Deleting docker-compose containers..."
   docker-compose -p $TEST_BUILD_TAG rm -f
   echo "Deleting docker-compose images..."
-  docker rmi -f `docker images | awk '$1~/^'$TEST_BUILD_TAG'/ {print $3}'`
+  #docker rmi -f `docker images | awk '$1~/^'$TEST_BUILD_TAG'/ {print $3}'`
   echo "Removing docker-compose networks..."
   docker network rm `docker network ls | awk '$2~/^'$TEST_BUILD_TAG'/ {print $1}'`
   echo "Removing the http server container"
