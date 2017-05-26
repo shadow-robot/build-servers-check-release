@@ -34,7 +34,7 @@ if [ -z "$TEST_BUILD_TAG" ]; then
 fi
 # Docker silently removes any special characters from -p arg, so to avoid disagreements:
 TEST_BUILD_TAG=$(echo $TEST_BUILD_TAG | tr -dc '[:alnum:]\n\r' | tr '[:upper:]' '[:lower:]')
-export TEST_BUILD_TAG=$TEST_BUILD_TAG
+export TEST_BUILD_TAG=$TEST_BUILD_TAG # this may cause problems in case of parallel builds?
 
 # Function to kill and remove any docker containers that have the build tag
 cleanup() {
