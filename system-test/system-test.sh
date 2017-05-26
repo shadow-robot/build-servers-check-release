@@ -108,10 +108,10 @@ if [ $? -ne 0 ]; then
   echo "Error: Failed to tag built Docker image as \"${DOCKER_HUB_TAG}\". Aborting."
   exit_clean 1
 fi
-#docker push  ${DOCKER_HUB_TAG}
-#if [ $? -ne 0 ]; then
-#  echo "Error: Failed to push \"${DOCKER_HUB_TAG}\" to Docker Hub. Aborting."
-#  exit_clean 1
-#fi
+docker push  ${DOCKER_HUB_TAG}
+if [ $? -ne 0 ]; then
+  echo "Error: Failed to push \"${DOCKER_HUB_TAG}\" to Docker Hub. Aborting."
+  exit_clean 1
+fi
 
 exit_clean 0
