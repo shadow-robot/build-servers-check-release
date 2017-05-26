@@ -59,7 +59,7 @@ exit_clean() {
 trap 'cleanup ; printf "Tests failed for unexpected reasons..."' HUP INT QUIT PIPE TERM
 
 # Try building release image
-docker build --tag ${TEST_BUILD_TAG}_system-under-test .
+docker build --tag ${TEST_BUILD_TAG}_system-under-test --squash .
 if [ $? -ne 0 ]; then
   echo "Failed to build test image(s)."
   exit_clean 1
