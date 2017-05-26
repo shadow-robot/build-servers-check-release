@@ -14,7 +14,7 @@ RUN set +x && \
 
     echo "Getting ssh key from the http server" && \
     mkdir /home/user/.ssh && \
-    wget -O /home/user/.ssh/id_rsa http://172.17.0.1:8080/id_rsa && \
+    wget -O /home/user/.ssh/id_rsa http://172.17.0.1:8008/id_rsa && \
     ssh-keyscan github.com >> /home/user/.ssh/known_hosts && \
     chmod 400 /home/user/.ssh/id_rsa && \
     chown -R $MY_USERNAME:$MY_USERNAME /home/user/.ssh && \
