@@ -63,8 +63,8 @@ exit_clean() {
 trap 'cleanup ; printf "Tests failed for unexpected reasons..."' HUP INT QUIT PIPE TERM
 
 # Set up the https server with ssh key
-cp --no-preserve=mode,ownership $id_rsa .
-docker run --name=nginx-ssh -d -v $WORKSPACE:/usr/share/nginx/html -p 8008:80 nginx
+#cp --no-preserve=mode,ownership $id_rsa .
+#docker run --name=nginx-ssh -d -v $WORKSPACE:/usr/share/nginx/html -p 8008:80 nginx
 
 # Try building test image(s)
 docker-compose -p $TEST_BUILD_TAG build
