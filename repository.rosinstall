@@ -1,4 +1,4 @@
 - git:
     local-name: build-servers-check
-    uri: https://github.com/shadow-robot/build-servers-check.git
+    uri: git@github.com:shadow-robot/build-servers-check.git
     version: 'kinetic-devel'
