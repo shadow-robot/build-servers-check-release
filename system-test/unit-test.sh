@@ -13,4 +13,9 @@ export coverage_tests_result_dir="$relative_job_path/code_coverage"
 
 export remote_shell_script="https://raw.githubusercontent.com/shadow-robot/sr-build-tools/$toolset_branch/bin/sr-run-ci-build.sh"
 
+MY_CURL=`which curl`
+if [[ -z "$MY_CURL" ]]; then
+  echo "curl utility is required to run this script"
+  exit 1;
+fi
 curl -s "$( echo "$remote_shell_script" | sed 's/#/%23/g' )" | bash /dev/stdin "$toolset_branch" $server_type $used_modules $relative_job_path
