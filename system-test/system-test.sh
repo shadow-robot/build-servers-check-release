@@ -34,6 +34,7 @@ if [ -z "$TEST_BUILD_TAG" ]; then
 fi
 # Docker silently removes any special characters from -p arg, so to avoid disagreements:
 TEST_BUILD_TAG=$(echo $TEST_BUILD_TAG | tr -dc '[:alnum:]\n\r' | tr '[:upper:]' '[:lower:]')
+export TEST_BUILD_TAG=$TEST_BUILD_TAG # this may cause problems in case of parallel builds?
 
 # Function to kill and remove any docker containers that have the build tag
 cleanup() {
@@ -56,6 +57,14 @@ exit_clean() {
 
 # Trap any unexpected errors with an error report and the cleanup function
 trap 'cleanup ; printf "Tests failed for unexpected reasons..."' HUP INT QUIT PIPE TERM
+
+# Try building release image
+docker build --tag ${TEST_BUILD_TAG}_system-under-test --squash ..
+if [ $? -ne 0 ]; then
+  echo "Failed to build test image(s)."
+  exit_clean 1
+fi
+echo "Successfully built release image(s)."
 
 # Try building test image(s)
 docker-compose -p $TEST_BUILD_TAG build
@@ -88,21 +97,21 @@ else
 fi
 
 # Tag and push built image-under-test to Docker hub
-DOCKER_HUB_TAG="shadowrobot/build-servers-check-release:${release_tag_flavour}-v${release_tag_version}"
-docker login -u ${DOCKER_HUB_USERNAME} -p ${DOCKER_HUB_PASSWORD}
-if [ $? -ne 0 ]; then
-  echo "Error: Failed to log in to Docker Hub. Aborting."
-  exit_clean 1
-fi
-docker tag ${TEST_BUILD_TAG}_system-under-test ${DOCKER_HUB_TAG}
-if [ $? -ne 0 ]; then
-  echo "Error: Failed to tag built Docker image as \"${DOCKER_HUB_TAG}\". Aborting."
-  exit_clean 1
-fi
-docker push  ${DOCKER_HUB_TAG}
-if [ $? -ne 0 ]; then
-  echo "Error: Failed to push \"${DOCKER_HUB_TAG}\" to Docker Hub. Aborting."
-  exit_clean 1
-fi
+#DOCKER_HUB_TAG="shadowrobot/build-servers-check-release:${release_tag_flavour}-v${release_tag_version}"
+#docker login -u ${DOCKER_HUB_USERNAME} -p ${DOCKER_HUB_PASSWORD}
+#if [ $? -ne 0 ]; then
+#  echo "Error: Failed to log in to Docker Hub. Aborting."
+#  exit_clean 1
+#fi
+#docker tag ${TEST_BUILD_TAG}_system-under-test ${DOCKER_HUB_TAG}
+#if [ $? -ne 0 ]; then
+#  echo "Error: Failed to tag built Docker image as \"${DOCKER_HUB_TAG}\". Aborting."
+#  exit_clean 1
+#fi
+#docker push  ${DOCKER_HUB_TAG}
+#if [ $? -ne 0 ]; then
+#  echo "Error: Failed to push \"${DOCKER_HUB_TAG}\" to Docker Hub. Aborting."
+#  exit_clean 1
+#fi
 
 exit_clean 0

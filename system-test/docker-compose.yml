@@ -7,9 +7,5 @@ services:
     environment:
       - "ROS_MASTER_URI=http://system-under-test:11311"
   system-under-test:
-    build:
-      context: ..
-      args:
-        GITHUB_LOGIN: "${GITHUB_LOGIN}"
-        GITHUB_PASSWORD: "${GITHUB_PASSWORD}"
+    image: ${TEST_BUILD_TAG}_system-under-test
     command: bash -c "source /opt/ros/kinetic/setup.bash && roscore"
